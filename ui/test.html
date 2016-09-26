@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+/*  if (typeof module === 'object') {
+    window.module = module;
+    module = undefined;
+  }*/
+  window.onload = function (){
+    var URL = window.location.href.split("?")
+    document.getElementById('myWebView').src = URL[1]
+  }
+</script>
+<style>
+webview{
+  display:inline-flex;
+  width: 100%;
+  height: 100%;
+}
+</style>
+</head>
+<body>
+<webview  id="myWebView" width="100%" height="100%"></webview>
+</body>
+</html>

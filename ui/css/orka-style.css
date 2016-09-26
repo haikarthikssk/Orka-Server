@@ -1,0 +1,69 @@
+
+body{
+  padding-right: 1px;
+  padding-left: 1px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.ui.three.wide.column {
+    width: auto;
+    float:left;
+}
+.ui.demo.menu {
+  height: 93%;
+  width: 100% !important;
+  border-color: #d4d4d4;
+}
+.ui.demo.menu .item {
+  font-size: 1.1em;
+}
+.ui.raised.segment {
+  height: 93%;
+  position:relative;
+}
+#content {
+  width:100% ;
+  height:93%;
+}
+#displayArea {
+  width:100% !important;
+  height:calc(100% - 150px);
+  overflow: auto;
+}
+#notificationDisplay{
+  height:calc(100% - 150px);
+}
+#notificationTable{
+  height:100%;
+}
+td{
+  text-overflow: ellipsis;
+  height:10px;
+}
+#header {
+ font-family: sans-serif;
+}
+.chart {
+  position: relative;
+  display: inline-block;
+  width: 110px;
+  height: 110px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+.chart canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.percent {
+  display: inline-block;
+  line-height: 110px;
+  z-index: 2;
+}
+.percent:after {
+  content: '%';
+  margin-left: 0.1em;
+  font-size: .8em;
+}

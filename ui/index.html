@@ -1,0 +1,633 @@
+<!--  -->
+<html>
+
+<head>
+  <link rel="stylesheet" href="css/semantic.min.css" />
+  <link rel="stylesheet" href="css/orka-style.css" />
+  <link rel="stylesheet" href="css/messenger.css" />
+  <link rel="stylesheet" href="css/messenger-theme-air.css" />
+  <script>
+    if (typeof module === 'object') {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/semantic.min.js"></script>
+  <script src="js/messenger.min.js"></script>
+  <script src="js/angular.min.js"></script>
+  <script>
+    if (window.module) module = window.module;
+  </script>
+</head>
+
+<body>
+  <div ng-app="orka">
+
+    <div class="ui raised grid" id="header" ng-controller="orkaHeaderCTRL">
+      <div class="ui sixteen wide column">
+        <h2 class="ui centered aligned olive large header">  Orka
+        <div class="ui right floated buttons">
+            <button class="mini ui basic blue button" tabindex="0" ng-click="minimize()"><i class="minimize icon"></i></button>
+            <button class="mini ui basic red button" tabindex="0" ng-click="quit()"><i class="close icon"></i></button>
+        </div>
+      </h2>
+
+      </div>
+    </div>
+
+    <div id="orkaCTRL" class="ui grid">
+      <div class="sixteen wide column">
+        <div class="ui purple menu" id="headerMenu">
+
+          <div class="ui dropdown item">
+            <div class="text">Orka</div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div class="item addPiMenuItem"><i class="add icon"></i>Add Pi</div>
+              <div class="item addPiListMenuItem"><i class="list icon"></i>Manage Lists</div>
+              <div class="item addTaskListMenuItem"><i class="wait icon"></i>Manage Tasks</div>
+              <div class="item batchExecuteCommandMenuItem"><i class="tasks icon"></i>Batch Execute Command</div>
+            </div>
+          </div>
+          <a class="item loader" href="#homeDisplay">
+        Home
+      </a>
+          <div class="right menu">
+            <a class="item loader" href="#taskDisplay">
+          Tasks
+        </a>
+            <a class="item loader" href="#notificationDisplay" id="notificationHeaderItem">
+          Notifications
+            <div class="floating ui teal label" id="notificationHeaderLabel" style="display:none;">0</div>
+        </a>
+        <a class="item loader" href="#logsDisplay">
+          Logs
+        </a>
+        <a class="item loader" href="#settingsDisplay">
+        Settings
+        </a>
+          </div>
+        </div>
+      </div>
+      <div id="displayArea">
+        <div class="ui grid" id="homeDisplay" ng-controller="orkaCTRL">
+          <div class="ui sixteen wide column"></div>
+          <div class="ui three wide column">
+            <div class="ui vertical pointing demo menu">
+              <a class="item" ng-repeat="(name,pi) in raspberryPi" ng-class="{active:isSelectedPi(name)}" ng-click="selectPi(name)">
+                <span>
+  <i class="icon" ng-class="{'green leaf': pi.isConnected(),'yellow warning':!pi.isConnected()}" ></i>
+</span> {{name}}
+                <i class="cancel icon" ng-click="removePi(name)"></i>
+              </a>
+            </div>
+          </div>
+          <div class="twelve wide column" style="width:81% !important">
+            <div class="ui raised pink segment" id="content">
+              <div class="ui sixteen wide column" id="itemInfo" ng-if="selectedPi !== null">
+                <button class="ui teal button" ng-click="connectOrDisconnect(selectedPi.getName())">{{selectedPi.isConnected()?'Disconnect':'Connect'}}</button>
+                <div class="ui top attached tabular menu" >
+                  <a class="item active" data-tab="stats"><i class="purple heartbeat icon"></i>Statistics</a>
+                  <a class="item" data-tab="shell"><i class="brown terminal icon"></i>Shell</a>
+                  <a class="item" data-tab="fileManager"><i class=" folder open icon"></i>File Manager</a>
+                  <a class="item" data-tab="systemInfo"><i class=" orange folder open icon"></i>System Info</a>
+                </div>
+                <div class="ui bottom attached active tab segment" data-tab="stats" id="data-tab-stats">
+                  <div class="ui four cards" >
+                    <div class="ui green raised link card">
+                      <div class="content">
+                        <div class="meta">
+                          CPU
+                        </div>
+                        <div class="description">
+                          <center>
+                        <span class="chart" easypiechart percent="selectedPi.getCPU()" options="chartOptions">
+			                  <span class="percent" ng-bind="selectedPi.getCPU()"></span>
+                    		</span>
+                        </center>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="ui blue raised link card">
+                      <div class="content">
+                        <div class="meta">
+                          Memory
+                        </div>
+                        <div class="description">
+                          <center>
+                          <span class="chart" easypiechart percent="selectedPi.getRam()" options="chartOptions">
+  			                  <span class="percent" ng-bind="selectedPi.getRam()"></span>
+                      		</span>
+
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                <!--    <div class="ui yellow raised link card">
+                      <div class="content">
+                        <div class="meta">
+                          Network
+                        </div>
+                        <div class="description">
+                          <center>
+                          <span class="chart" easypiechart percent="selectedPi.getRam()" options="chartOptions">
+                          <span class="percent" ng-bind="selectedPi.getRam()"></span>
+                          </span>
+                          </center>
+                        </div>
+                      </div>
+                    </div> -->
+                    <div class="ui purple raised link card">
+                      <div class="content">
+                        <div class="meta">
+                          Disk Usage
+                        </div>
+                        <div class="description">
+                          <center>
+                          <span class="chart" easypiechart percent="selectedPi.getDisk()" options="chartOptions">
+                          <span class="percent" ng-bind="selectedPi.getDisk()"></span>
+                          </span>
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ui olive raised link card">
+                      <div class="content">
+                        <div class="meta">
+                          Temperature
+                        </div>
+                        <div class="description">
+                          <center>
+                          <span class="chart" easypiechart percent="selectedPi.getTemperature()" options="chartOptions">
+                          <span class="percent" ng-bind="selectedPi.getTemperature()"></span>
+                          </span>
+                          </center>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="shell" id="data-tab-shell">
+                  <button class="ui teal button" ng-show="selectedPi.isConnected()" ng-click="openShell(selectedPi.getName())"> Open External</button>
+                  <webview ng-hide="!selectedPi.isConnected()" src="{{getTrustUrl(selectedPi.getHostName())}}" style="overflow:hidden;display:inline-flex;width:100%;height:70%">
+                  </webview>
+                </div>
+                <div class="ui bottom attached tab segment " data-tab="fileManager" id="data-tab-fileManager">
+                  <button class="ui teal button" ng-show="selectedPi.isConnected()" ng-click="openFileManagerAs(selectedPi.getName())"> Open External</button>
+                  <webview  ng-hide="!selectedPi.isConnected()" src="{{getTrustUrl(selectedPi.getFileManagerURL())}}" style="overflow:hidden;display:inline-flex;width:100%;height:70%">
+                  </webview>
+                </div>
+                <div class="ui bottom attached tab segment" data-tab="systemInfo" id="data-tab-systemInfo">
+                  <div class="ui four cards">
+                    <div class="ui card">
+                      <div class="meta">
+                          Connection Information
+                      </div>
+                      <span class="ui content">
+                        IP Address : {{selectedPi.getIP()}} <br />
+                      </span>
+                        <span class="ui content">
+                        Port : {{selectedPi.getPort()}}
+                      </span>
+                    </div>
+                    <div class="ui card" ng-repeat="category in ['cpu','os','net']">
+                      <div class="meta">
+                        {{category}}
+                      </div>
+
+                      <span class="ui content" ng-if="category !== 'net'" ng-repeat="(name,stats) in selectedPi.getSystemInfo()[category]">
+                        {{name}} : {{stats}}
+                      </span>
+                      <span class="ui content" ng-if="category == 'net'" ng-repeat="(name,stats) in selectedPi.getSystemInfo()[category]">
+                        <span  ng-repeat ="(item,data) in stats">
+                          {{item}} : {{data}}
+                        </span>
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end of home display -->
+        <div class="ui grid" id="notificationDisplay" style="display:none" ng-controller="orkaUiNotification">
+          <div class="ui sixteen wide column">
+            <table class="ui green fixed selectable single line celled table" id="notificationTable" style="white-space:pre-line">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Time</th>
+                  <th>Command</th>
+                  <th>Output</th>
+                </tr>
+              </thead>
+            </table>
+            </div>
+        </div>
+        <!-- end of Notification Display -->
+        <div class="ui grid" id="logsDisplay" style="display:none;" ng-controller="orkaUiLogger">
+          <div class="ui sixteen wide column">
+            <table class="ui orange fixed selectable celled table" id="logsTable" style="white-space:pre-line">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Time</th>
+                  <th>Log</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+        <!-- end of Logs Display-->
+        <div class="ui grid" id="settingsDisplay" style="display:none;" ng-controller="orkaSettingsController">
+          <div class="ui sixteen wide column">
+             <div class="ui two column grid">
+             <div class="three wide column">
+               <div class="ui demo pointing vertical menu">
+                 <a class="item" ng-click="selectedTabItem = 'server'" ng-class="{active:selectedTabItem == 'server'}">
+                   Server
+                 </a>
+                 <a class="item" ng-click="selectedTabItem = 'clients'" ng-class="{active:selectedTabItem == 'clients'}">
+                  Clients
+                 </a>
+                 <a class="item" ng-click="selectedTabItem = 'notifications'" ng-class="{active:selectedTabItem == 'notifications'}">
+                   Notifications
+                 </a>
+                 <a class="item" ng-click="selectedTabItem = 'logs'" ng-class="{active:selectedTabItem == 'logs'}">
+                   Logs
+                 </a>
+                 <a class="item" ng-click="selectedTabItem = 'reset'" ng-class="{active:selectedTabItem == 'reset'}">
+                   Reset Settings
+                 </a>
+               </div>
+             </div>
+             <div class="thirteen wide column">
+               <div class="ui grid">
+                 <div class="sixteen wide column">
+               <div class="ui raised purple segment" ng-switch="selectedTabItem">
+                 <div ng-switch-when="server">
+                   <h2 class="ui header">Server</h2>
+                   <h4 class="ui horizontal divider">Configuration</h4>
+                   <div class="ui labeled input">
+                     <a class="ui label">
+                     Port
+                     </a>
+                     <input placeholder="port" type="text" id="portNum" ng-model="serverPort">
+                     <button class="ui teal button" ng-click="saveServerPort()">Save Changes</button>
+                   </div>
+                   <br />
+                   <br />
+                 </div>
+                 <div ng-switch-when="clients">
+                   <h2 class="ui header">Clients</h2>
+                   <h4 class="ui horizontal divider">Configuration</h4>
+                   <textarea style="width:100%;height:75%;" id="clientConnectionInfo" ng-model="clientConnectionSettings">
+                   </textarea>
+                   <br />
+                   <br />
+                   <button class="ui teal button" style="float:right" ng-click="saveClientConnectionSettings()">Save Changes</button>
+                 </div>
+                 <div ng-switch-when="notifications">
+                   <h2 class="ui header">Notifications</h2>
+                   <h4 class="ui horizontal divider">Configuration</h4>
+                   <div class="ui checkbox">
+                     <input type="checkbox" ng-click="toggleNotificationStatus($event,'uiNotification')" ng-checked="getNotificationStatus('uiNotification')">
+                     <label>UI Notifications</label>
+                   </div>
+                   <div class="ui  checkbox">
+                     <input type="checkbox" name="public" ng-click="toggleNotificationStatus($event,'systemNotification')" ng-checked="getNotificationStatus('systemNotification')"/>
+                     <label>System Notifications</label>
+                   </div>
+                   <div class="ui  checkbox">
+                     <input type="checkbox" name="public" ng-click="toggleNotificationStatus($event,'flockNotification')" ng-checked="getNotificationStatus('flockNotification')"/>
+                     <label>Flock Notifications</label>
+                   </div>
+                   <h4 class="ui horizontal divider">Flock Configuration</h4>
+                   <textarea placeholder="Flock webhook" ng-bind="getFlockWebHook()" id="flockWebHook" style="width:100%;height:65%;"></textarea>
+                   <br />
+                   <br />
+                   <button class="ui teal button" ng-click="saveFlockWebHook()" style="float:right">Save Changes</button>
+                 </div>
+                 <div ng-switch-when="logs">
+                   <h2 class="ui header">Logs</h2>
+                   <h4 class="ui horizontal divider">Configuration</h4>
+                   <div class="ui checkbox">
+                     <input type="checkbox" ng-click="toggleNotificationStatus($event,'logging')" ng-checked="getNotificationStatus('logging')">
+                     <label>Enable Logging</label>
+                   </div>
+                 </div>
+                 <div ng-switch-when="reset">
+                   <button class="ui red button" ng-click="showResetModal()">Reset Default Settings</button>
+                   <div class="ui standard modal" id="resetConfirmationModal">
+                     <div class="header">
+                       Are you sure?
+                     </div>
+                     <div class="content">
+                       Are you sure want to exit and delete the tasks, clients and every other settings?
+                     </div>
+                     <div class="actions">
+                       <div class="ui brown right labeled icon button" ng-click="resetSettings()">
+                         yes
+                         <i class="checkmark icon"></i>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               </div>
+             </div>
+             </div>
+            </div>
+           </div>
+        </div>
+        <!-- end of Settings Display-->
+        <div class="ui grid" id="taskDisplay" style="display:none;overflow: auto;" ng-controller="orkaSchedularController">
+           <div class="ui sixteen wide column">
+              <div class="ui two column grid">
+              <div class="three wide column">
+                <div class="ui demo pointing vertical menu">
+                  <a class="item" ng-repeat="(taskname,task) in getAllTasks()" ng-click="selectTask(taskname)" ng-class="{active:selectedTask.name === taskname}">
+                    <span><i class="icon" ng-class="{'green lightning': isRunning(taskname),'yellow warning':!isRunning(taskname)}" ></i></span>{{taskname}}<i class="ui remove icon" ng-click="deleteTask(taskname)"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="thirteen wide column">
+                <div class="ui grid">
+                  <div class="sixteen wide column">
+                <div class="ui raised olive segment" ng-show="selectedTask !== null">
+                  <div>
+                    <button class="ui teal button" ng-click="toggleTask(selectedTask.name)">{{isRunning(selectedTask.name)?'Stop':'Start'}}</button>
+                    <div class="ui horizontal divider">Task Configuration</div>
+                    <p>
+                    Type : {{selectedTask.type}}
+                    </p>
+                    <p>
+                    Interval : {{selectedTask.interval / 1000}} Seconds
+                    </p>
+                    <p>
+                      Command : {{selectedTask.command.toString()}}
+                    </p>
+                  </div>
+                </div>
+                </div>
+              </div>
+              </div>
+             </div>
+            </div>
+        </div>
+        <!-- end of Task Display-->
+      </div>
+
+    </div>
+
+    <div ng-controller="orkaAddModal">
+      <!-- Model  -->
+      <div class="ui form standard modal" id="addPiModal">
+        <i class="close icon"></i>
+        <div class="header">
+          Add Pi
+        </div>
+        <div class="content">
+          <div class="description">
+
+            <div class="ui attached message">
+              <div class="header">
+                <p>Name should be unique</p>
+              </div>
+              {{error_msg}}
+            </div>
+          </div>
+          <br>
+          <div class="ui labeled input">
+            <br>
+            <a class="ui label">
+    Name
+    </a>
+            <input placeholder="Name" type="text" ng-model="name" required>
+          </div>
+          <br>
+          <br>
+          <div class="ui labeled input">
+            <a class="ui label">
+    IP Address
+  </a>
+            <input placeholder="IP Address" type="text" ng-model="ip">
+          </div>
+          <br>
+          <br>
+          <div class="ui labeled input">
+            <a class="ui label">
+    Port
+  </a>
+            <input placeholder="Port" type="text" ng-model="port">
+          </div>
+        </div>
+        <div class="actions">
+          <div class="ui negative black button">
+            Close
+          </div>
+          <div class="ui green right labeled icon button" ng-click="addPi()">
+            Add Pi
+            <i class="checkmark icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Modal Ends -->
+    <div ng-controller="orkaPiListModal">
+      <div class="ui standard modal" id="addPiListModal">
+        <div class="header">
+          Create List
+        </div>
+        <div class="content">
+          <div class="ui form">
+            <div class="ui labeled input">
+              <br>
+              <a class="ui label">
+        Name
+        </a>
+              <input placeholder="Name" type="text" ng-model="listName" required>
+            </div>
+            <br>
+            <br>
+            <div>
+              <select multiple="" class="ui dropdown" ng-model="selectedPi">
+                <option ng-repeat="name in getAvailablePi()" value="{{name}}">{{name}}</option>
+              </select>
+            </div>
+            <div class="ui horizontal divider">
+              Available Lists
+            </div>
+            <div class="ui segment" ng-repeat="list in getAllList()">
+              <h4 class="ui header">{{list}}
+                <i class="ui red delete icon" ng-click="removeList(list)"></i>
+              </h4>
+              <div class="ui teal label" ng-repeat="client in getList(list)">
+                {{client}}
+                <i class="ui delete icon" ng-click="removeFromList(list,client)"></i>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="actions">
+          <div class="ui green right labeled icon button" ng-click="createList()">
+            Create List
+            <i class="checkmark icon"></i>
+          </div>
+        </div>
+        </disv>
+      </div>
+
+      <!-- piList Modal Ends Here -->
+
+      <div ng-controller="orkaTaskModal">
+        <div class="ui standard modal" id="addPiTaskModal">
+          <div class="header">
+            Create Tasks
+          </div>
+          <div class="content">
+            <div class="ui form">
+              <div class="ui labeled input">
+                <br>
+                <a class="ui label">
+          Name
+          </a>
+                <input placeholder="Name" type="text" ng-model="taskName" required>
+              </div>
+              <br>
+              <br>
+              <div class="ui labeled input">
+                <br>
+                <a class="ui label">
+                Interval</a>
+                <input placeholder="Interval in seconds" type="text" ng-model="interval" required>
+              </div>
+              <br>
+              <br>
+              <div>Type :
+                <input type="radio" tabindex="0" name="radio-repeat" ng-model="repeat" value="interval">Interval
+                <input type="radio" tabindex="0" name="radio-repeat" ng-model="repeat" value="timeout">Timeout
+              </div>
+              <br />
+              <input type="checkbox" tabindex="0" ng-model="isBroadcast">
+              <label>BroadCast To all Pi's</label>
+              <div ng-show="!isBroadcast">
+                <select multiple="" class="ui dropdown" ng-model="selectedPi">
+                  <option ng-repeat="name in getAvailablePiAndLists()" value="{{name}}">{{name}}</option>
+                </select>
+              </div>
+              <div class="ui horizontal divider">
+                Command will be sent to following Clients
+              </div>
+              <div class="ui segment">
+                <div class="ui label" ng-show="!isBroadcast" ng-repeat="pi in getClientsFromLists(selectedPi)" ng-class="{'green':isPiConnected(pi),'red':!isPiConnected(pi)}">
+                  {{pi}}
+                </div>
+                <div class="ui label" ng-show="isBroadcast" ng-repeat="pi in getAvailablePi()" ng-class="{'green':isPiConnected(pi),'red':!isPiConnected(pi)}">
+                  {{pi}}
+                </div>
+              </div>
+              <div class="ui horizontal divider">
+                Command To Execute
+              </div>
+              <textarea placeholder="Command To Execute!..." ng-model="commandToExecute"></textarea>
+            </div>
+
+          </div>
+          <div class="actions">
+            <div class="ui green right labeled icon button" ng-click="createTask()">
+              Create Tasks
+              <i class="checkmark icon"></i>
+            </div>
+          </div>
+          </disv>
+        </div>
+
+        <!-- piTask Modal Ends Here -->
+      <div ng-controller="orkaBatchModal">
+        <div class="ui standard modal" id="batchExecuteModal">
+          <div class="header">
+            Batch Execute Command
+          </div>
+          <div class="content">
+            <div class="ui form">
+              <input type="checkbox" tabindex="0" ng-model="isBroadcast">
+              <label>BroadCast To all Pi's</label>
+              <div ng-show="!isBroadcast">
+                <select multiple="" class="ui dropdown" ng-model="selectedPi">
+                  <option ng-repeat="name in getAvailablePiAndLists()" value="{{name}}">{{name}}</option>
+                </select>
+              </div>
+              <div class="ui horizontal divider">
+                Command will be sent to following Clients
+              </div>
+              <div class="ui segment">
+                <div class="ui label" ng-show="!isBroadcast" ng-repeat="pi in resolveListToPi(selectedPi)" ng-class="{'green':isPiConnected(pi),'red':!isPiConnected(pi)}">
+                  {{pi}}
+                </div>
+                <div class="ui label" ng-show="isBroadcast" ng-repeat="pi in getAvailablePi()" ng-class="{'green':isPiConnected(pi),'red':!isPiConnected(pi)}">
+                  {{pi}}
+                </div>
+              </div>
+              <div class="ui horizontal divider">
+                Command To Execute
+              </div>
+              <textarea placeholder="Command To Execute!..." ng-model="commandToExecute"></textarea>
+            </div>
+
+          </div>
+          <div class="actions">
+            <div class="ui green right labeled icon button" ng-click="startBatchExecution()">
+              Start
+              <i class="checkmark icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Batch Model Ends Here -->
+
+      <div ng-controller="orkaClientInitModel">
+        <div class="ui standard modal" id="clientInitModal">
+          <div class="content">
+            <div class="ui purple active progress">
+              <div class="bar">
+                <div class="progress">
+                </div>
+              </div>
+              <div class="label">{{headerText}}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- Loader Model Ends Here-->
+      <div class="ui secondary aligned bottom attached grid">
+        <div class="left floated left aligned six wide column">
+        Orka - Alpha Version
+        </div>
+        <div class="right floated right aligned six wide column">
+        Mit License
+        <i class="github icon"></i>
+        </div>
+      </div>
+
+    </div>
+</body>
+
+<script src="js/orka-angular-controller.js"></script>
+<script src="js/orka-generator-service.js"></script>
+<script src="js/orka-schedular.js"></script>
+<script src="js/orka-notification-service.js"></script>
+<script src="js/orka-IPC-bridge.js"></script>
+<script src="js/notifications/orka-ui-notifier.js"></script>
+<script src="js/notifications/orka-flock-notifier.js"></script>
+<script src="js/logger/orka-ui-logger.js"></script>
+<script src="js/angular.easypiechart.min.js"></script>
+</html>

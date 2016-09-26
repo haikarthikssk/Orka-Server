@@ -1,0 +1,29 @@
+{
+  "name": "orka",
+  "productName": "Orka Server",
+  "description": "Orka Monitor and Controller",
+  "version": "0.1.0",
+  "author": "Karthik K",
+  "copyright": "MIT License",
+  "main": "server.js",
+  "dependencies": {
+    "electron-settings": "^2.1.1",
+    "request": "^2.74.0",
+    "socket.io": "^1.4.8",
+    "socket.io-client": "^1.4.8"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . --out=dist --asar --overwrite --all"
+  },
+  "devDependencies": {
+    "electron-packager": "^8.0.0",
+    "electron": "^1.0.1",
+    "eslint": "^3.3.1",
+    "eslint-config-standard": "^6.0.0-beta.3",
+    "eslint-plugin-import": "^1.14.0",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-react": "^6.1.2",
+    "eslint-plugin-standard": "^2.0.0"
+  }
+}
