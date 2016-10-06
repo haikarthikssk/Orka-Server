@@ -1,7 +1,7 @@
 # Orka-Server
 Raspberry Pi Monitor and Controller [Official Page](https://haikarthikssk.github.io/Orka-Server/)
 
-# To Run :
+### To Run :
 1. git clone https://github.com/haikarthikssk/Orka-Server.git
 2. cd Orka-Server
 3. ** npm install & npm start**
