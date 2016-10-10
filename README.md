@@ -62,3 +62,6 @@ Raspberry Pi Monitor and Controller
 
 ## Why Orka ?
   I am aware that there are lot of tools available to control multiple clients. Most of them are command line tools. I wanted to create a one click access Gui tool to control Multiple clients. And that's why Orka was born. Peace!....
+
+### Caution!
+Orka is in Aplha Stage. Many features(like authentication) are yet to be merged. Kindly avoid using it in production environment.
