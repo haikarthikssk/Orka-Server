@@ -158,7 +158,7 @@ ipcMain.on('piRemoved', function (event, item) {
 })
 
 ipcMain.on('piAdded', function (event, args) {
-  // when added , try to client to conenct
+  // when added , try to connect the client
   var param = {}
   param['name'] = args.name
   // client connection settings defines ip,name and port for the client to connect to
